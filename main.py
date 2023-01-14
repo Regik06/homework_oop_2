@@ -20,7 +20,7 @@ class Student:
             return student.average
 
     def lector_grade(self, lector, course, grade):
-        if isinstance(lector, Lecturer) and course in self.courses_in_progress:
+        if isinstance(lector, Lecturer) and course in self.courses_in_progress and course in lector.courses_attached:
             if course in lector.grades_lector:
                 lector.grades_lector[course] += [grade]
             else:
@@ -135,7 +135,7 @@ lector1.courses_attached += ['Python']
 lector2 = Lecturer('Mill', 'Pops')
 lector2.courses_attached += ['Java']
 
-#rate_hw
+#lector_grade
 print(lector1.grades_lector)
 print(lector2.grades_lector)
 print()
