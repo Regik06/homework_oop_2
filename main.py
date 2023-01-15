@@ -1,6 +1,7 @@
 import statistics
 
-
+students = []
+lectors = []
 class Student:
     def __init__(self, name, surname, gender):
         self.name = name
@@ -9,15 +10,13 @@ class Student:
         self.finished_courses = []
         self.courses_in_progress = []
         self.grades = {}
+        students.append(self)
+
 
     def statistic_average(self):
         self.average = statistics.mean([j for i in self.grades.values() for j in i])
         return self.average
 
-    def statistic(self, student, course):
-        if course in student.grades:
-            student.average = statistics.mean([j for i in student.grades.values() for j in i])
-            return student.average
 
     def lector_grade(self, lector, course, grade):
         if isinstance(lector, Lecturer) and course in self.courses_in_progress and course in lector.courses_attached:
@@ -57,6 +56,7 @@ class Lecturer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
         self.grades_lector = {}
+        lectors.append(self)
 
     def statistic_average(self):
         self.average = statistics.mean([j for i in self.grades_lector.values() for j in i])
@@ -74,11 +74,6 @@ class Lecturer(Mentor):
             print("Eror")
             return
         return self.statistic_average() < other.statistic_average()
-
-    def statistic(self, lectuer, course):
-        if course in lectuer.grades_lector:
-            lectuer.average = statistics.mean([j for i in lectuer.grades_lector.values() for j in i])
-            return lectuer.average
 
 
 class Reviewer (Mentor):
@@ -99,6 +94,24 @@ class Reviewer (Mentor):
                 student.grades[course] = [grade]
         else:
             return 'Ошибка'
+
+
+def statistic_student(students=students, course='Python'):
+    res = []
+    for student in students:
+        if course in student.grades.keys():
+            for values in student.grades.values():
+                res += values
+            return f'Средний бал студентов по лекции {course}: {statistics.mean(res)}'
+
+
+def statistic_lector(lectors=lectors, course='Python'):
+    res = []
+    for lector in lectors:
+        if course in lector.grades_lector.keys():
+            for values in lector.grades_lector.values():
+                res += values
+            return f'Средний бал лекторов по лекции {course}: {statistics.mean(res)}'
 
 
 student1 = Student('Morty', 'Smith', 'm')
@@ -123,22 +136,11 @@ reviewer2.rate_hw(student2, 'Java', 8)
 reviewer2.rate_hw(student2, 'Java', 7)
 reviewer2.rate_hw(student2, 'Java', 10)
 
-
-#rate_hw
-print(student1.grades)
-print(student2.grades)
-print()
-
 lector1 = Lecturer('Kety', 'New')
 lector1.courses_attached += ['Python']
 
 lector2 = Lecturer('Mill', 'Pops')
 lector2.courses_attached += ['Java']
-
-#lector_grade
-print(lector1.grades_lector)
-print(lector2.grades_lector)
-print()
 
 student1.lector_grade(lector1, 'Python', 9)
 student1.lector_grade(lector1, 'Python', 1)
@@ -147,6 +149,16 @@ student1.lector_grade(lector1, 'Python', 10)
 student2.lector_grade(lector2, 'Java', 5)
 student2.lector_grade(lector2, 'Java', 7)
 student2.lector_grade(lector2, 'Java', 4)
+
+#rate_hw
+print(student1.grades)
+print(student2.grades)
+print()
+
+#lector_grade
+print(lector1.grades_lector)
+print(lector2.grades_lector)
+print()
 
 #__str__
 reviewer1.__str__()
@@ -179,10 +191,11 @@ print(student1.__lt__(student2))
 
 #4.1
 print()
-print(student1.statistic(student1, 'Python'))
-print(student2.statistic(student2, 'Java'))
+print(statistic_student(students, 'Python'))
+print(statistic_student(students, 'Java'))
 
 #4.2
 print()
-print(lector1.statistic(lector1, 'Python'))
-print(lector2.statistic(lector2, 'Java'))
+print(statistic_lector(lectors, 'Python'))
+print(statistic_lector(lectors, 'Java'))
+
